@@ -1,31 +1,29 @@
-version: '2'
+version: '3'
 
 services:
     postgresql:
         restart: always
-        image: sameersbn/postgresql:9.5-1
+        image: mdillon/postgis:9.5-alpine
         volumes:
-            - /srv/docker/tendenci/postgresql:/var/lib/postgresql:Z
+            - /srv/docker/tendenci/postgresql:/var/lib/postgresql/data
         environment:
-            - DB_USER=tendenci
-            - DB_NAME=tendenci
-            - DB_PASS=password
-            - DB_EXTENSION=postgis,postgis_topology,fuzzystrmatch,postgis_tiger_geocoder
+            - POSTGRES_DB=tendenci
+            - POSTGRES_USER=tendenci
+            - POSTGRES_PASSWORD=password
+            - PGDATA=/var/lib/postgresql/data/pgdata
         networks:
-            - backend
+          - backend
 
     tendenci:
         restart: always
-        image: frenchbeard/tendenci:0.1.0
+        build: .
         volumes:
-            - /srv/docker/tendenci/app/logs:/var/log/tendenci:Z
-            - /srv/docker/tendenci/app/data:/home/tendenci/data:Z
+            - /srv/docker/tendenci/app/logs:/var/log/tendenci
+            - /srv/docker/tendenci/app/data:/home/tendenci/data
         depends_on:
             - postgresql
         expose:
             - 8000
-        networks:
-            - backend
         environment:
             # Postgresql setup
             - DB_USER=tendenci
@@ -38,7 +36,10 @@ services:
             - ADMIN_USER=admin
             - ADMIN_MAIL=admin@example.com
             - ADMIN_PASS=password
+        networks:
+          backend:
+            aliases:
+              - postgresql
 
 networks:
-    backend:
-        driver: bridge
+  backend:

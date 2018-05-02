@@ -20,7 +20,7 @@ done
 function check_user()
 {
     if ! grep -i "^$TENDENCI_USER" /etc/passwd; then
-        useradd -b "$TENDENCI_HOME" -U "$TENDENCI_HOME" "$TENDENCI_USER"
+        useradd -b "$TENDENCI_HOME" -U "$TENDENCI_USER"
     fi
 }
 

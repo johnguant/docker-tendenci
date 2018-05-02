@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 MAINTAINER frenchbeard <frenchbeardsec@gmail.com>
 
-ENV TENDENCI_VERSION=7.2 \
+ENV TENDENCI_VERSION=7.3 \
     TENDENCI_USER="tendenci" \
     TENDENCI_HOME="/home/tendenci" \
     TENDENCI_LOG_DIR="/var/log/tendenci" \
@@ -16,13 +16,13 @@ RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y \
     && apt-get install -y build-essential python-dev libevent-dev libpq-dev \
         libjpeg8 libjpeg-dev libfreetype6 libfreetype6-dev git python-pip \
-        python-virtualenv git \
-    && update-locale LANG=C.UTF-8 LC_MESSAGES=POSIX
+        python-virtualenv git libgeos-c1v5
 
 COPY assets/build/ ${TENDENCI_BUILD_DIR}
 RUN bash -x ${TENDENCI_BUILD_DIR}/install.sh
 
 COPY assets/runtime/ /runtime
+RUN chmod -R 777 /runtime
 
 EXPOSE 8000/tcp
 
